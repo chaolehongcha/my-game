@@ -1,7 +1,7 @@
 const game = {
   state: GAME_STATES.MENU,
   currentLevel: 1,
-  maxUnlockedLevel: 1,
+  maxUnlockedLevel: TOTAL_LEVELS,
   score: 0,
   targetScore: 0,
   board: null,

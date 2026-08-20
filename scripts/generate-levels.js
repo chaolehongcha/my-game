@@ -1,22 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
-const OUTPUT = path.join(__dirname, '..', 'levels', 'level-data.json');
+const OUTPUT = path.join(__dirname, '..', 'src', 'generated-levels.js');
 
 function getLevelConfig(num) {
   if (num === 1) {
     return {
-      level: 1,
-      phase: 'intro',
+      level: 1, phase: 'intro',
       rows: 6, cols: 6, numColors: 3, timeLimit: 60, targetScore: 80,
       bricks: [],
       grid: [
-        [0, 0, 0, 0, 0, 0],
-        [1, 1, 1, 2, 2, 2],
-        [0, 0, 0, 0, 0, 0],
-        [1, 1, 1, 2, 2, 2],
-        [0, 0, 2, 2, 2, 2],
-        [1, 1, 1, 1, 0, 0],
+        [0,0,0,0,0,0],
+        [1,1,1,2,2,2],
+        [0,0,0,0,0,0],
+        [1,1,1,2,2,2],
+        [0,0,2,2,2,2],
+        [1,1,1,1,0,0],
       ],
     };
   }
@@ -48,20 +47,21 @@ function getLevelConfig(num) {
   const brickPositions = [];
   const used = new Set();
   for (let i = 0; i < p.bricks; i++) {
-    let r, c;
+    let r, c, attempts = 0;
     do {
       r = Math.floor(Math.random() * p.rows);
       c = Math.floor(Math.random() * p.cols);
-    } while (used.has(`${r},${c}`));
-    used.add(`${r},${c}`);
-    brickPositions.push([r, c]);
+      attempts++;
+    } while (used.has(`${r},${c}`) && attempts < 50);
+    if (attempts < 50) {
+      used.add(`${r},${c}`);
+      brickPositions.push([r, c]);
+    }
   }
 
   return {
-    level: num,
-    phase,
-    rows: p.rows,
-    cols: p.cols,
+    level: num, phase,
+    rows: p.rows, cols: p.cols,
     numColors: p.colors,
     timeLimit: Math.max(p.time, 20),
     targetScore,
@@ -75,17 +75,22 @@ for (let i = 1; i <= 50; i++) {
   levels.push(getLevelConfig(i));
 }
 
-const dir = path.dirname(OUTPUT);
-if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-fs.writeFileSync(OUTPUT, JSON.stringify(levels, null, 2));
+let js = 'const GENERATED_LEVELS = [\n';
+levels.forEach((l, idx) => {
+  const comma = idx < levels.length - 1 ? ',' : '';
+  js += JSON.stringify(l) + comma + '\n';
+});
+js += '];\n';
 
-console.log(`已生成 ${levels.length} 关 -> ${OUTPUT}`);
+fs.writeFileSync(OUTPUT, js, 'utf-8');
+console.log(`已生成固定关卡数据 -> ${OUTPUT}`);
+console.log(`共 ${levels.length} 关`);
 
 const phases = {};
 levels.forEach(l => { phases[l.phase] = (phases[l.phase] || 0) + 1; });
 console.log('阶段分布:', phases);
 
 console.log('\n难度梯度:');
-levels.filter(l => [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50].includes(l.level)).forEach(l => {
+levels.filter(l => [1, 5, 10, 11, 15, 20, 21, 25, 30, 31, 35, 40, 41, 45, 50].includes(l.level)).forEach(l => {
   console.log(`  第${l.level}关 (${l.phase}): ${l.rows}x${l.cols} ${l.numColors}色 目标${l.targetScore}分 ${l.timeLimit}s 砖块${l.bricks.length}`);
 });
