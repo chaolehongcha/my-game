@@ -19,6 +19,7 @@ class Board {
       this.grid = config.map(row =>
         row.map(val => {
           if (val === null) return null;
+          if (val === -1) return { color: 0, brick: true };
           if (typeof val === 'number') {
             return { color: val, brick: false };
           }
