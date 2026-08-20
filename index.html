@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>消消乐 - 滑动消除休闲游戏</title>
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="game-canvas"></canvas>
+    <div id="ui-overlay">
+      <div id="menu-screen" class="screen active">
+        <h1 id="game-title">消消乐</h1>
+        <p id="game-subtitle">滑动连接4个同色方块消除</p>
+        <button class="btn" id="start-btn">开始游戏</button>
+        <button class="btn btn-secondary" id="levels-btn">选关</button>
+      </div>
+      <div id="level-select-screen" class="screen">
+        <h2>选关</h2>
+        <div id="level-grid"></div>
+        <button class="btn btn-back" onclick="UIManager.showMenu()">返回</button>
+      </div>
+      <div id="game-screen" class="screen"></div>
+      <div id="result-screen" class="screen">
+        <h2 id="result-title">过关!</h2>
+        <p id="result-score">得分: 0</p>
+        <button class="btn" id="next-btn" onclick="game.nextLevel()">下一关</button>
+        <button class="btn btn-secondary" id="retry-btn" onclick="game.retryLevel()">再玩一次</button>
+        <button class="btn btn-back" onclick="UIManager.showMenu()">返回主菜单</button>
+      </div>
+    </div>
+  </div>
+  <script src="src/constants.js"></script>
+  <script src="src/particles.js"></script>
+  <script src="src/audio.js"></script>
+  <script src="src/board.js"></script>
+  <script src="src/levels.js"></script>
+  <script src="src/level-data.js"></script>
+  <script src="src/renderer.js"></script>
+  <script src="src/input.js"></script>
+  <script src="src/audio.js"></script>
+  <script src="src/ui.js"></script>
+  <script src="src/game.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "color-swipe",
+  "version": "0.1.0",
+  "description": "滑动消除休闲游戏 - 连接4个同色方块消除，限时通关",
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "generate-levels": "node scripts/generate-levels.js",
+    "analyze-difficulty": "node scripts/analyze-difficulty.js"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}

@@ -1,0 +1,172 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: #0a0a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+#game-container {
+  position: relative;
+  width: 400px;
+  height: 700px;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+#game-canvas {
+  display: block;
+  width: 400px;
+  height: 700px;
+  border-radius: 12px;
+  box-shadow: 0 0 40px rgba(233, 69, 96, 0.15);
+  touch-action: none;
+}
+
+#ui-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+.screen.active {
+  display: flex;
+}
+
+#game-screen {
+  pointer-events: none;
+}
+
+#menu-screen {
+  background: rgba(26, 26, 46, 0.92);
+  border-radius: 12px;
+}
+
+#game-title {
+  color: #e94560;
+  font-size: 42px;
+  margin-bottom: 8px;
+  text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+}
+
+#game-subtitle {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 40px;
+}
+
+.btn {
+  background: #e94560;
+  color: #fff;
+  border: none;
+  padding: 14px 48px;
+  font-size: 18px;
+  border-radius: 28px;
+  cursor: pointer;
+  margin: 6px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  pointer-events: auto;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(233, 69, 96, 0.4);
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 2px solid #e94560;
+  color: #e94560;
+}
+
+.btn-back {
+  background: transparent;
+  border: 1px solid #555;
+  color: #888;
+  font-size: 14px;
+  padding: 8px 24px;
+  margin-top: 12px;
+}
+
+#level-select-screen {
+  background: rgba(26, 26, 46, 0.95);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+#level-select-screen h2 {
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+#level-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  max-width: 320px;
+  margin-bottom: 16px;
+}
+
+.level-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  background: #0f3460;
+  color: #fff;
+  transition: transform 0.1s;
+}
+
+.level-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.level-btn.locked {
+  background: #222;
+  color: #555;
+  cursor: not-allowed;
+}
+
+#result-screen {
+  background: rgba(26, 26, 46, 0.92);
+  border-radius: 12px;
+}
+
+#result-title {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+#result-score {
+  color: #fff;
+  font-size: 20px;
+  margin-bottom: 24px;
+}
