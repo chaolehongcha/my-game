@@ -21,16 +21,16 @@ function getLevelConfig(num) {
   }
 
   const phase = num <= 10 ? 'intro' :
-    num <= 20 ? 'easy' :
-    num <= 30 ? 'medium' :
-    num <= 40 ? 'hard' : 'expert';
+    num <= 25 ? 'easy' :
+    num <= 35 ? 'medium' :
+    num <= 45 ? 'hard' : 'expert';
 
   const params = {
     intro:   { rows: 6, cols: 6, colors: 3, time: 60 - (num-1)*2,         bricks: 0 },
     easy:    { rows: 7, cols: 7, colors: 3, time: 55 - Math.floor((num-11)/3), bricks: 0 },
-    medium:  { rows: 8, cols: 8, colors: 4, time: 50 - Math.floor((num-21)/4), bricks: 2 + Math.floor((num-21)/3) },
-    hard:    { rows: 8, cols: 8, colors: 5, time: 45 - Math.floor((num-31)/4), bricks: 3 + Math.floor((num-31)/3) },
-    expert:  { rows: 9, cols: 9, colors: 5, time: 40 - Math.floor((num-41)/5), bricks: 5 + Math.floor((num-41)/2) },
+    medium:  { rows: 8, cols: 8, colors: 4, time: 50 - Math.floor((num-26)/3), bricks: 2 + Math.floor((num-26)/3) },
+    hard:    { rows: 8, cols: 8, colors: 5, time: 45 - Math.floor((num-36)/3), bricks: 3 + Math.floor((num-36)/3) },
+    expert:  { rows: 9, cols: 9, colors: 5, time: 40 - Math.floor((num-46)/2), bricks: 5 + Math.floor((num-46)/2) },
   };
 
   const p = params[phase];
@@ -91,6 +91,6 @@ levels.forEach(l => { phases[l.phase] = (phases[l.phase] || 0) + 1; });
 console.log('阶段分布:', phases);
 
 console.log('\n难度梯度:');
-levels.filter(l => [1, 5, 10, 11, 15, 20, 21, 25, 30, 31, 35, 40, 41, 45, 50].includes(l.level)).forEach(l => {
+levels.filter(l => [1, 5, 10, 11, 15, 20, 25, 26, 30, 35, 36, 40, 45, 46, 50].includes(l.level)).forEach(l => {
   console.log(`  第${l.level}关 (${l.phase}): ${l.rows}x${l.cols} ${l.numColors}色 目标${l.targetScore}分 ${l.timeLimit}s 砖块${l.bricks.length}`);
 });
