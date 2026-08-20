@@ -94,38 +94,45 @@ class Board {
     const movements = [];
 
     for (let c = 0; c < this.cols; c++) {
-      const bricks = {};
-      const blocks = [];
-
+      const brickRows = [];
       for (let r = 0; r < this.rows; r++) {
         const block = this.grid[r][c];
-        if (block !== null) {
-          if (block.brick) {
-            bricks[r] = block;
-          } else {
+        if (block !== null && block.brick) brickRows.push(r);
+      }
+
+      let segStart = 0;
+      const segments = [];
+      for (const br of brickRows) {
+        segments.push([segStart, br - 1]);
+        segStart = br + 1;
+      }
+      segments.push([segStart, this.rows - 1]);
+
+      for (const [start, end] of segments) {
+        if (start > end) continue;
+
+        const blocks = [];
+        for (let r = start; r <= end; r++) {
+          const block = this.grid[r][c];
+          if (block !== null && !block.brick) {
             blocks.push({ block, fromRow: r });
           }
+          this.grid[r][c] = null;
         }
-        this.grid[r][c] = null;
-      }
 
-      for (const r in bricks) {
-        this.grid[r][c] = bricks[r];
-      }
-
-      let blockIdx = blocks.length - 1;
-      for (let r = this.rows - 1; r >= 0 && blockIdx >= 0; r--) {
-        if (this.grid[r][c] !== null) continue;
-        this.grid[r][c] = blocks[blockIdx].block;
-        if (r !== blocks[blockIdx].fromRow) {
-          movements.push({
-            block: this.grid[r][c],
-            col: c,
-            fromRow: blocks[blockIdx].fromRow,
-            toRow: r,
-          });
+        let blockIdx = blocks.length - 1;
+        for (let r = end; r >= start && blockIdx >= 0; r--) {
+          this.grid[r][c] = blocks[blockIdx].block;
+          if (r !== blocks[blockIdx].fromRow) {
+            movements.push({
+              block: this.grid[r][c],
+              col: c,
+              fromRow: blocks[blockIdx].fromRow,
+              toRow: r,
+            });
+          }
+          blockIdx--;
         }
-        blockIdx--;
       }
     }
 
