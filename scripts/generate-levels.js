@@ -42,9 +42,7 @@ const TUTORIAL_LEVELS = [
 function getPhase(num) {
   if (num <= 15) return 'intro';
   if (num <= 30) return 'easy';
-  if (num <= 40) return 'medium';
-  if (num <= 50) return 'hard';
-  return 'expert';
+  return 'hard';
 }
 
 function getParams(num) {
@@ -52,9 +50,7 @@ function getParams(num) {
   if (num <= 5) return { rows: 5, cols: 5, colors: 3, time: 60 };
   if (num <= 15) return { rows: 6, cols: 6, colors: 3, time: 60 - (num - 6) * 2, bricks: 0 };
   if (num <= 30) return { rows: 7, cols: 7, colors: 3, time: 55 - Math.floor((num - 16) / 3), bricks: 0 };
-  if (num <= 40) return { rows: 8, cols: 8, colors: 4, time: 50 - Math.floor((num - 31) / 3), bricks: 2 + Math.floor((num - 31) / 3) };
-  if (num <= 50) return { rows: 8, cols: 8, colors: 5, time: 45 - Math.floor((num - 41) / 3), bricks: 3 + Math.floor((num - 41) / 3) };
-  return { rows: 9, cols: 9, colors: 5, time: 40 - Math.floor((num - 51) / 2), bricks: 5 + Math.floor((num - 51) / 2) };
+  return { rows: 9, cols: 9, colors: 4, time: 45 - Math.floor((num - 31) / 2), bricks: 2 + Math.floor((num - 31) / 3) };
 }
 
 function getLevelConfig(num) {
@@ -99,7 +95,7 @@ function getLevelConfig(num) {
 }
 
 const levels = [];
-for (let i = 1; i <= 50; i++) {
+for (let i = 1; i <= 40; i++) {
   levels.push(getLevelConfig(i));
 }
 
@@ -118,13 +114,7 @@ const phases = {};
 levels.forEach(l => { phases[l.phase] = (phases[l.phase] || 0) + 1; });
 console.log('阶段分布:', phases);
 
-console.log('\n前15关列表:');
-for (let i = 1; i <= 15; i++) {
-  const l = levels[i-1];
-  console.log(`  第${l.level}关 (${l.phase}): ${l.rows}x${l.cols} ${l.numColors}色 目标${l.targetScore}分 ${l.timeLimit}s`);
-}
-console.log('\n其他关卡:');
-[16,20,25,30,35,40,45,50].forEach(i => {
-  const l = levels[i-1];
-  console.log(`  第${l.level}关 (${l.phase}): ${l.rows}x${l.cols} ${l.numColors}色 目标${l.targetScore}分 ${l.timeLimit}s 砖块${l.bricks.length}`);
+console.log('\n关卡列表:');
+levels.forEach(l => {
+  console.log(`  第${l.level}关 (${l.phase}): ${l.rows}x${l.cols} ${l.numColors}色 目标${l.targetScore}分 ${l.timeLimit}s 砖块${(l.bricks || []).length}`);
 });
