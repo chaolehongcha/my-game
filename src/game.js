@@ -18,6 +18,9 @@ const game = {
   animating: false,
   rotateAnim: null,
   rotateSnapshot: null,
+  levelMessage: null,
+  messageTimer: 0,
+  messageDuration: 2.5,
 
   init() {
     this._setupInput();
@@ -50,6 +53,16 @@ const game = {
     this.animating = false;
     this.rotateAnim = null;
     this.rotateSnapshot = null;
+
+    const messages = {
+      1: '划过同色方块（最少四个）！',
+      2: '小心掉落！',
+      3: '旋转平台！',
+      4: '一次消除越多，加分更多！',
+      5: '利用彩色石头消除更多！',
+    };
+    this.levelMessage = messages[num] || null;
+    this.messageTimer = this.levelMessage ? this.messageDuration : 0;
 
     this.board = new Board(config.rows, config.cols, config.numColors);
     this.board.init(config.grid, bricks);
@@ -84,6 +97,7 @@ const game = {
   _handleSwipe(cells) {
     if (this.state !== GAME_STATES.PLAYING) return;
     if (!this.board || this.animating) return;
+    if (this.messageTimer > 0) return;
 
     const blockInfos = cells.map(({ row, col }) => ({
       row, col,
@@ -309,6 +323,7 @@ const game = {
 
       if (this.reshuffleNotifyTimer > 0) this.reshuffleNotifyTimer -= dt;
       if (this.deadlockTimer > 0) this.deadlockTimer -= dt;
+      if (this.messageTimer > 0) this.messageTimer -= dt;
 
       this._updateAnimations(dt);
       ParticleManager.update(dt);
@@ -351,6 +366,11 @@ const game = {
         if (this.state === GAME_STATES.PLAYING) {
           Renderer.drawReshuffleBtn(this.reshufflesLeft, InputManager.hoveredReshuffle);
           Renderer.drawRestartBtn(InputManager.hoveredRestart);
+
+          if (this.levelMessage && this.messageTimer > 0) {
+            const progress = 1 - this.messageTimer / this.messageDuration;
+            Renderer.drawLevelMessage(this.levelMessage, progress);
+          }
 
           if (this.reshuffleNotifyTimer > 0) {
             Renderer.drawNotification('已重排', this.reshuffleNotifyTimer);

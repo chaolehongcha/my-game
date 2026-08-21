@@ -20,6 +20,7 @@ class Board {
         row.map(val => {
           if (val === null) return null;
           if (val === -1) return { color: 0, brick: true };
+          if (val === WILD) return { color: 0, wild: true };
           if (typeof val === 'number') {
             return { color: val, brick: false };
           }

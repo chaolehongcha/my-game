@@ -37,6 +37,8 @@ const Renderer = {
 
         if (block.brick) {
           this._drawBrick(x, y, size);
+        } else if (block.wild) {
+          this._drawWildBlock(x, y, size);
         } else {
           this._drawBlock(x, y, size, BLOCK_COLORS[block.color] || '#888');
         }
@@ -157,6 +159,50 @@ const Renderer = {
     ctx.moveTo(x + size * 3 / 4, y + size / 2);
     ctx.lineTo(x + size * 3 / 4, y + size);
     ctx.stroke();
+  },
+
+  _drawWildBlock(x, y, size) {
+    const ctx = this.ctx;
+    const colors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#a29bfe', '#fd79a8'];
+    const seg = size / colors.length;
+    for (let i = 0; i < colors.length; i++) {
+      ctx.fillStyle = colors[i];
+      this._roundRect(x + i * seg, y, seg + 1, size, 1);
+      ctx.fill();
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx.lineWidth = 2;
+    this._roundRect(x, y, size, size, 6);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = 'bold ' + Math.floor(size * 0.45) + 'px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('★', x + size / 2, y + size / 2 + 1);
+  },
+
+  drawLevelMessage(text, progress) {
+    if (progress <= 0 || progress >= 1) return;
+    const ctx = this.ctx;
+    const alpha = progress < 0.2 ? progress / 0.2 : progress > 0.8 ? (1 - progress) / 0.2 : 1;
+    const scale = 0.8 + progress * 0.2;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+    ctx.scale(scale, scale);
+
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    this._roundRect(-180, -50, 360, 80, 16);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 28px "Segoe UI", "PingFang SC", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, 0, 0);
+
+    ctx.restore();
   },
 
   drawPath(path, board) {

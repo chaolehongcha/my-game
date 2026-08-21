@@ -50,6 +50,7 @@ const GAME_STATES = {
 const TOTAL_LEVELS = 40;
 const MAX_RESHUFFLES = 2;
 const RESHUFFLE_NOTIFY_DURATION = 1.2;
+const WILD = -2;
 
 function calcScore(n) {
   return (n - 3) * 10;

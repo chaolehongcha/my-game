@@ -12,17 +12,19 @@ class SwipeHandler {
 
   start(row, col) {
     if (!this.board) return false;
-    const color = this.board.getBlockColor(row, col);
-    if (color === null) return false;
+    const block = this.board.getBlock(row, col);
+    if (!block || block.brick || block.wild) return false;
     this.path = [{ row, col }];
-    this.color = color;
+    this.color = block.color;
     this.active = true;
     return true;
   }
 
   move(row, col) {
     if (!this.active || !this.board) return;
-    if (this.board.getBlockColor(row, col) !== this.color) return;
+    const block = this.board.getBlock(row, col);
+    if (!block || block.brick) return;
+    if (!block.wild && block.color !== this.color) return;
 
     const last = this.path[this.path.length - 1];
     const dr = Math.abs(row - last.row);

@@ -17,13 +17,13 @@ const TUTORIAL_LEVELS = [
   },
   {
     level: 2, phase: 'intro',
-    rows: 5, cols: 5, numColors: 3, timeLimit: 120, targetScore: 70,
+    rows: 5, cols: 5, numColors: 1, timeLimit: 120, targetScore: 40,
     grid: [
-      [0,0,0,0,1],
-      [0,-1,-1,-1,1],
-      [2,-1,-1,-1,1],
-      [2,-1,-1,-1,1],
-      [2,2,2,1,1],
+      [0,0,null,null,null],
+      [0,0,null,null,null],
+      [null,null,null,null,null],
+      [0,0,0,null,null],
+      [0,0,0,null,null],
     ],
   },
   {
@@ -37,6 +37,28 @@ const TUTORIAL_LEVELS = [
       [0,null,null,null,0],
     ],
   },
+  {
+    level: 4, phase: 'intro',
+    rows: 5, cols: 5, numColors: 1, timeLimit: 120, targetScore: 50,
+    grid: [
+      [0,0,0,0,null],
+      [null,null,null,null,null],
+      [null,null,null,null,null],
+      [0,0,0,0,0],
+      [0,0,0,0,0],
+    ],
+  },
+  {
+    level: 5, phase: 'intro',
+    rows: 5, cols: 5, numColors: 2, timeLimit: 120, targetScore: 40,
+    grid: [
+      [0,0,0,0,null],
+      [0,null,-2,0,0],
+      [null,null,0,null,null],
+      [null,null,null,null,null],
+      [null,null,null,null,null],
+    ],
+  },
 ];
 
 function getPhase(num) {
@@ -46,15 +68,14 @@ function getPhase(num) {
 }
 
 function getParams(num) {
-  if (num <= 3) return null;
-  if (num <= 5) return { rows: 5, cols: 5, colors: 3, time: 60 };
+  if (num <= 5) return null;
   if (num <= 15) return { rows: 6, cols: 6, colors: 3, time: 60 - (num - 6) * 2, bricks: 0 };
   if (num <= 30) return { rows: 7, cols: 7, colors: 3, time: 55 - Math.floor((num - 16) / 3), bricks: 0 };
   return { rows: 9, cols: 9, colors: 4, time: 45 - Math.floor((num - 31) / 2), bricks: 2 + Math.floor((num - 31) / 3) };
 }
 
 function getLevelConfig(num) {
-  if (num <= 3) return TUTORIAL_LEVELS[num - 1];
+  if (num <= 5) return TUTORIAL_LEVELS[num - 1];
 
   const p = getParams(num);
   const phase = getPhase(num);
