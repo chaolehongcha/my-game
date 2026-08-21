@@ -47,7 +47,7 @@ const GAME_STATES = {
   LOSE: 'lose',
 };
 
-const TOTAL_LEVELS = 50;
+const TOTAL_LEVELS = 42;
 const MAX_RESHUFFLES = 2;
 const RESHUFFLE_NOTIFY_DURATION = 1.2;
 const WILD = -2;
