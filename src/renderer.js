@@ -71,6 +71,8 @@ const Renderer = {
       const by = item.y - size / 2;
       if (item.block.brick) {
         this._drawBrick(bx, by, size);
+      } else if (item.block.wild) {
+        this._drawWildBlock(bx, by, size);
       } else {
         this._drawBlock(bx, by, size, BLOCK_COLORS[item.block.color] || '#888');
       }
