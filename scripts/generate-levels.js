@@ -62,16 +62,17 @@ const TUTORIAL_LEVELS = [
 ];
 
 function getPhase(num) {
-  if (num <= 15) return 'intro';
-  if (num <= 30) return 'easy';
+  if (num <= 20) return 'intro';
+  if (num <= 35) return 'easy';
   return 'hard';
 }
 
 function getParams(num) {
   if (num <= 5) return null;
-  if (num <= 15) return { rows: 6, cols: 6, colors: 3, time: 60 - (num - 6) * 2, bricks: 0 };
-  if (num <= 30) return { rows: 7, cols: 7, colors: 3, time: 55 - Math.floor((num - 16) / 3), bricks: 0 };
-  return { rows: 9, cols: 9, colors: 4, time: 45 - Math.floor((num - 31) / 2), bricks: 2 + Math.floor((num - 31) / 3) };
+  if (num <= 10) return { rows: 5, cols: 5, colors: 3, time: 60 - (num - 6) * 2, bricks: 0 };
+  if (num <= 20) return { rows: 6, cols: 6, colors: 3, time: 60 - (num - 11) * 2, bricks: 0 };
+  if (num <= 35) return { rows: 7, cols: 7, colors: 3, time: 55 - Math.floor((num - 21) / 3), bricks: 0 };
+  return { rows: 9, cols: 9, colors: 4, time: 45 - Math.floor((num - 36) / 2), bricks: 2 + Math.floor((num - 36) / 3) };
 }
 
 function getLevelConfig(num) {
