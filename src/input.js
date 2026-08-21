@@ -24,9 +24,19 @@ class SwipeHandler {
     if (!this.active || !this.board) return;
     const block = this.board.getBlock(row, col);
     if (!block || block.brick) return;
-    if (!block.wild && block.color !== this.color) return;
 
     const last = this.path[this.path.length - 1];
+    const lastBlock = this.board.getBlock(last.row, last.col);
+    const lastWasWild = lastBlock && lastBlock.wild;
+
+    if (!block.wild) {
+      if (!lastWasWild && block.color !== this.color) return;
+    }
+
+    if (!block.wild && lastWasWild) {
+      this.color = block.color;
+    }
+
     const dr = Math.abs(row - last.row);
     const dc = Math.abs(col - last.col);
     if (dr + dc !== 1) return;

@@ -192,15 +192,14 @@ const Renderer = {
     ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
     ctx.scale(scale, scale);
 
-    ctx.fillStyle = 'rgba(0,0,0,0.5)';
-    this._roundRect(-180, -50, 360, 80, 16);
-    ctx.fill();
-
     ctx.fillStyle = '#fff';
-    ctx.font = 'bold 28px "Segoe UI", "PingFang SC", sans-serif';
+    ctx.font = 'italic bold 32px "Segoe UI", "PingFang SC", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(0,0,0,0.8)';
+    ctx.shadowBlur = 8;
     ctx.fillText(text, 0, 0);
+    ctx.shadowBlur = 0;
 
     ctx.restore();
   },
