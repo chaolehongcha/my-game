@@ -100,6 +100,8 @@ const Renderer = {
 
       if (anim.block.brick) {
         this._drawBrick(bx, by, size);
+      } else if (anim.block.wild) {
+        this._drawWildBlock(bx, by, size);
       } else {
         this._drawBlock(bx, by, size, BLOCK_COLORS[anim.block.color] || '#888');
       }
