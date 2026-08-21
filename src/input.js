@@ -83,10 +83,15 @@ const InputManager = {
   frameRightRect: null,
   frameTopRect: null,
   reshuffleRect: null,
-  restartRect: null,
+  menuRect: null,
+  menuRestartRect: null,
+  menuHomeRect: null,
+  menuOpen: false,
   hoveredFrame: null,
   hoveredReshuffle: false,
-  hoveredRestart: false,
+  hoveredMenu: false,
+  hoveredMenuRestart: false,
+  hoveredMenuHome: false,
 
   init(canvas) {
     this.canvas = canvas;
@@ -124,7 +129,9 @@ const InputManager = {
     };
 
     this.reshuffleRect = { x: CANVAS_WIDTH - 48, y: 12, w: 32, h: 28 };
-    this.restartRect = { x: CANVAS_WIDTH - 88, y: 12, w: 32, h: 28 };
+    this.menuRect = { x: CANVAS_WIDTH - 88, y: 12, w: 32, h: 28 };
+    this.menuRestartRect = { x: CANVAS_WIDTH - 120, y: 48, w: 110, h: 30 };
+    this.menuHomeRect = { x: CANVAS_WIDTH - 120, y: 82, w: 110, h: 30 };
   },
 
   _bindEvents() {
@@ -170,10 +177,21 @@ const InputManager = {
       if (this.handlers.onReshuffle) this.handlers.onReshuffle();
       return;
     }
-    if (this._isInRect(pos, this.restartRect)) {
+    if (this._isInRect(pos, this.menuRect)) {
+      this.menuOpen = !this.menuOpen;
+      return;
+    }
+    if (this.menuOpen && this._isInRect(pos, this.menuRestartRect)) {
+      this.menuOpen = false;
       if (this.handlers.onRestart) this.handlers.onRestart();
       return;
     }
+    if (this.menuOpen && this._isInRect(pos, this.menuHomeRect)) {
+      this.menuOpen = false;
+      if (this.handlers.onMenuHome) this.handlers.onMenuHome();
+      return;
+    }
+    this.menuOpen = false;
     if (this._isInRect(pos, this.frameLeftRect)) {
       if (this.handlers.onRotateCCW) this.handlers.onRotateCCW();
       return;
@@ -199,7 +217,9 @@ const InputManager = {
 
     this.hoveredFrame = null;
     this.hoveredReshuffle = false;
-    this.hoveredRestart = false;
+    this.hoveredMenu = false;
+    this.hoveredMenuRestart = false;
+    this.hoveredMenuHome = false;
 
     if (this._isInRect(pos, this.frameLeftRect)) {
       this.hoveredFrame = 'left';
@@ -211,8 +231,14 @@ const InputManager = {
     if (this._isInRect(pos, this.reshuffleRect)) {
       this.hoveredReshuffle = true;
     }
-    if (this._isInRect(pos, this.restartRect)) {
-      this.hoveredRestart = true;
+    if (this._isInRect(pos, this.menuRect)) {
+      this.hoveredMenu = true;
+    }
+    if (this.menuOpen && this._isInRect(pos, this.menuRestartRect)) {
+      this.hoveredMenuRestart = true;
+    }
+    if (this.menuOpen && this._isInRect(pos, this.menuHomeRect)) {
+      this.hoveredMenuHome = true;
     }
 
     if (!this.swipeHandler.isActive()) return;

@@ -36,6 +36,7 @@ const game = {
     InputManager.on('onFlip180', () => this._handleRotate('flip'));
     InputManager.on('onReshuffle', () => this._handleReshuffle());
     InputManager.on('onRestart', () => this.retryLevel());
+    InputManager.on('onMenuHome', () => this._goHome());
   },
 
   startLevel(num) {
@@ -315,6 +316,18 @@ const game = {
     this.startLevel(this.currentLevel);
   },
 
+  _goHome() {
+    this._clearTimer();
+    this.state = GAME_STATES.MENU;
+    this.deadlockTimer = 0;
+    this.animating = false;
+    this.blockAnimations = [];
+    this.rotateAnim = null;
+    this.rotateSnapshot = null;
+    InputManager.menuOpen = false;
+    UIManager.showMenu();
+  },
+
   _startLoop() {
     this.lastTime = performance.now();
     const loop = (now) => {
@@ -365,7 +378,7 @@ const game = {
 
         if (this.state === GAME_STATES.PLAYING) {
           Renderer.drawReshuffleBtn(this.reshufflesLeft, InputManager.hoveredReshuffle);
-          Renderer.drawRestartBtn(InputManager.hoveredRestart);
+          Renderer.drawRestartBtn(InputManager.hoveredMenu);
 
           if (this.levelMessage && this.messageTimer > 0) {
             const progress = 1 - this.messageTimer / this.messageDuration;

@@ -331,7 +331,7 @@ const Renderer = {
 
   drawRestartBtn(hovered) {
     const ctx = this.ctx;
-    const rect = InputManager.restartRect;
+    const rect = InputManager.menuRect;
     if (!rect) return;
 
     ctx.fillStyle = hovered ? '#ff8a8a' : 'rgba(233,69,96,0.4)';
@@ -339,10 +339,34 @@ const Renderer = {
     ctx.fill();
 
     ctx.fillStyle = '#fff';
-    ctx.font = 'bold 14px sans-serif';
+    ctx.font = 'bold 16px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('⟳', rect.x + rect.w / 2, rect.y + rect.h / 2);
+    ctx.fillText('☰', rect.x + rect.w / 2, rect.y + rect.h / 2);
+
+    if (InputManager.menuOpen) {
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      this._roundRect(InputManager.menuRestartRect.x - 4, InputManager.menuRestartRect.y - 4, InputManager.menuRestartRect.w + 8, 64, 8);
+      ctx.fill();
+
+      ctx.fillStyle = InputManager.hoveredMenuRestart ? '#ff8a8a' : 'rgba(233,69,96,0.5)';
+      this._roundRect(InputManager.menuRestartRect.x, InputManager.menuRestartRect.y, InputManager.menuRestartRect.w, InputManager.menuRestartRect.h, 6);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('重新开始', InputManager.menuRestartRect.x + InputManager.menuRestartRect.w / 2, InputManager.menuRestartRect.y + InputManager.menuRestartRect.h / 2);
+
+      ctx.fillStyle = InputManager.hoveredMenuHome ? '#ff8a8a' : 'rgba(233,69,96,0.5)';
+      this._roundRect(InputManager.menuHomeRect.x, InputManager.menuHomeRect.y, InputManager.menuHomeRect.w, InputManager.menuHomeRect.h, 6);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('返回主页', InputManager.menuHomeRect.x + InputManager.menuHomeRect.w / 2, InputManager.menuHomeRect.y + InputManager.menuHomeRect.h / 2);
+    }
   },
 
   drawNotification(text, timer) {
