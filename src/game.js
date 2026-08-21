@@ -59,7 +59,7 @@ const game = {
       2: '小心掉落！',
       3: '旋转平台！',
       4: '一次消除越多，加分更多！',
-      5: '利用彩色石头消除更多！',
+      5: '彩色石头可以被当作任何颜色！',
     };
     this.levelMessage = messages[num] || null;
     this.messageTimer = this.levelMessage ? this.messageDuration : 0;

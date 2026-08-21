@@ -39,23 +39,23 @@ const TUTORIAL_LEVELS = [
   },
   {
     level: 4, phase: 'intro',
-    rows: 5, cols: 5, numColors: 2, timeLimit: 120, targetScore: 40,
-    grid: [
-      [-1,0,0,-1,-1],
-      [-1,-1,0,-1,-1],
-      [-1,-2,-2,0,0],
-      [-1,2,2,2,-1],
-      [-1,-1,-1,-1,-1],
-    ],
-  },
-  {
-    level: 5, phase: 'intro',
     rows: 5, cols: 5, numColors: 1, timeLimit: 120, targetScore: 90,
     grid: [
       [0,0,0,0,0],
       [0,0,0,-1,-1],
       [0,0,-1,-1,-1],
       [0,0,-1,-1,-1],
+      [-1,-1,-1,-1,-1],
+    ],
+  },
+  {
+    level: 5, phase: 'intro',
+    rows: 5, cols: 5, numColors: 2, timeLimit: 120, targetScore: 40,
+    grid: [
+      [-1,0,0,-1,-1],
+      [-1,-1,0,-1,-1],
+      [-1,-2,-2,0,0],
+      [-1,2,2,2,-1],
       [-1,-1,-1,-1,-1],
     ],
   },
