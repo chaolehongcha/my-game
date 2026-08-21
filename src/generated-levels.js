@@ -3,7 +3,7 @@ const GENERATED_LEVELS = [
 {"level":2,"phase":"intro","rows":5,"cols":5,"numColors":3,"timeLimit":120,"targetScore":70,"grid":[[0,0,0,0,1],[0,-1,-1,-1,1],[2,-1,-1,-1,1],[2,-1,-1,-1,1],[2,2,2,1,1]]},
 {"level":3,"phase":"intro","rows":5,"cols":5,"numColors":2,"timeLimit":120,"targetScore":10,"grid":[[null,null,null,null,null],[null,-1,-1,-1,null],[null,-1,-1,-1,null],[0,-1,-1,-1,0],[0,null,null,null,0]]},
 {"level":4,"phase":"intro","rows":5,"cols":5,"numColors":1,"timeLimit":120,"targetScore":90,"grid":[[0,0,0,0,0],[0,0,0,-1,-1],[0,0,-1,-1,-1],[0,0,-1,-1,-1],[-1,-1,-1,-1,-1]]},
-{"level":5,"phase":"intro","rows":5,"cols":5,"numColors":2,"timeLimit":120,"targetScore":10,"grid":[[-1,0,0,-1,-1],[-1,-1,0,-1,-1],[-1,-1,-2,-1,-1],[-1,-1,2,2,-1],[-1,-1,-1,-1,-1]]},
+{"level":5,"phase":"intro","rows":5,"cols":5,"numColors":2,"timeLimit":120,"targetScore":10,"grid":[[-1,-1,-1,-1,-1],[-1,-1,0,-1,-1],[-1,-1,-2,-1,-1],[-1,-1,2,2,-1],[-1,-1,-1,-1,-1]]},
 {"level":6,"phase":"intro","rows":5,"cols":5,"numColors":3,"timeLimit":60,"targetScore":60,"bricks":[],"grid":[[1,2,0,1,2],[1,1,2,2,1],[0,1,1,1,0],[2,2,2,0,1],[0,0,0,0,1]]},
 {"level":7,"phase":"intro","rows":5,"cols":5,"numColors":3,"timeLimit":58,"targetScore":50,"bricks":[],"grid":[[0,2,2,2,1],[0,2,0,2,0],[2,0,0,0,2],[2,2,2,0,0],[1,0,2,2,1]]},
 {"level":8,"phase":"intro","rows":5,"cols":5,"numColors":3,"timeLimit":56,"targetScore":60,"bricks":[],"grid":[[2,1,0,1,2],[2,0,0,2,1],[0,1,2,1,2],[0,2,0,0,2],[2,0,-2,2,2]]},
