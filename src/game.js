@@ -5,15 +5,11 @@ const game = {
   score: 0,
   targetScore: 0,
   board: null,
-  timer: 0,
-  timeLimit: 0,
-  timerInterval: null,
   lastTime: 0,
   animFrame: null,
   reshufflesLeft: MAX_RESHUFFLES,
   reshuffleNotifyTimer: 0,
   deadlockTimer: 0,
-  loseReason: 'timeout',
   blockAnimations: [],
   animating: false,
   rotateAnim: null,
@@ -21,12 +17,28 @@ const game = {
   levelMessage: null,
   messageTimer: 0,
   messageDuration: 2.5,
+  flashTimer: 0,
+  _pendingAfterChange: false,
+  tutorialImage: null,
+  tutorialLevel: 0,
 
   init() {
+    this._loadTutorialImage();
     this._setupInput();
     UIManager.init();
     this._startLoop();
     UIManager.showMenu();
+  },
+
+  _loadTutorialImage() {
+    const img = new Image();
+    img.onload = () => {
+      if (this.currentLevel === 4 && this.state === GAME_STATES.PLAYING) {
+        this.tutorialLevel = 4;
+      }
+    };
+    img.src = 'assets/教程图片1.jpg';
+    this.tutorialImage = img;
   },
 
   _setupInput() {
@@ -37,6 +49,16 @@ const game = {
     InputManager.on('onReshuffle', () => this._handleReshuffle());
     InputManager.on('onRestart', () => this.retryLevel());
     InputManager.on('onMenuHome', () => this._goHome());
+    InputManager.on('onTap', () => this._handleTap());
+  },
+
+  _handleTap() {
+    if (this.tutorialLevel > 0) {
+      this.tutorialLevel = 0;
+      if (this.levelMessage) this.messageTimer = this.messageDuration;
+      return true;
+    }
+    return false;
   },
 
   startLevel(num) {
@@ -45,8 +67,6 @@ const game = {
 
     this.score = 0;
     this.targetScore = config.targetScore;
-    this.timeLimit = config.timeLimit;
-    this.timer = config.timeLimit;
     this.reshufflesLeft = MAX_RESHUFFLES;
     this.reshuffleNotifyTimer = 0;
     this.deadlockTimer = 0;
@@ -54,16 +74,21 @@ const game = {
     this.animating = false;
     this.rotateAnim = null;
     this.rotateSnapshot = null;
+    this._pendingAfterChange = false;
 
     const messages = {
       1: '划过同色方块（最少四个）！',
       2: '旋转平台！',
       3: '小心掉落！',
-      4: '一次消除越多，加分更多！',
-      5: '彩石可以连接任何颜色！',
+      4: ['尝试一次性全部消除', '满足分数目标！'],
+      5: ['彩块可以作为"桥梁"', '连接不同色的方块！'],
     };
     this.levelMessage = messages[num] || null;
     this.messageTimer = this.levelMessage ? this.messageDuration : 0;
+
+    this.flashTimer = (num === 2) ? 3 : 0;
+
+    this.tutorialLevel = 0;
 
     this.board = new Board(config.rows, config.cols, config.numColors);
     this.board.init(config.grid, bricks);
@@ -71,31 +96,17 @@ const game = {
 
     ParticleManager.clear();
 
-    this._startTimer();
     this.state = GAME_STATES.PLAYING;
     UIManager.showGame();
     this._checkDeadlock();
-  },
 
-  _startTimer() {
-    this._clearTimer();
-    this.timerInterval = setInterval(() => {
-      this.timer -= 0.1;
-      if (this.timer <= 0) {
-        this.timer = 0;
-        this._lose('timeout');
-      }
-    }, 100);
-  },
-
-  _clearTimer() {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
+    if (num === 4 && this.tutorialImage && this.tutorialImage.complete) {
+      this.tutorialLevel = 4;
     }
   },
 
   _handleSwipe(cells) {
+    if (this.tutorialLevel > 0) return;
     if (this.state !== GAME_STATES.PLAYING) return;
     if (!this.board || this.animating) return;
     if (this.messageTimer > 0) return;
@@ -140,6 +151,7 @@ const game = {
   },
 
   _handleRotate(type) {
+    if (this.tutorialLevel > 0) return;
     if (this.state !== GAME_STATES.PLAYING) return;
     if (!this.board || this.animating) return;
 
@@ -215,6 +227,7 @@ const game = {
         const movements = this.board.applyGravity();
         if (movements.length > 0) {
           this._startFallingAnimation(movements);
+          this._pendingAfterChange = true;
         } else {
           this.animating = false;
           this._afterBoardChange();
@@ -277,7 +290,6 @@ const game = {
   },
 
   _win() {
-    this._clearTimer();
     this.state = GAME_STATES.WIN;
     this.deadlockTimer = 0;
     this.animating = false;
@@ -291,10 +303,8 @@ const game = {
     UIManager.showResult(true, this.score, this.currentLevel);
   },
 
-  _lose(reason) {
-    this._clearTimer();
+  _lose() {
     this.state = GAME_STATES.LOSE;
-    this.loseReason = reason || 'timeout';
     this.animating = false;
     this.blockAnimations = [];
     this.rotateAnim = null;
@@ -317,7 +327,6 @@ const game = {
   },
 
   _goHome() {
-    this._clearTimer();
     this.state = GAME_STATES.MENU;
     this.deadlockTimer = 0;
     this.animating = false;
@@ -336,7 +345,8 @@ const game = {
 
       if (this.reshuffleNotifyTimer > 0) this.reshuffleNotifyTimer -= dt;
       if (this.deadlockTimer > 0) this.deadlockTimer -= dt;
-      if (this.messageTimer > 0) this.messageTimer -= dt;
+      if (this.messageTimer > 0 && this.tutorialLevel === 0) this.messageTimer -= dt;
+      if (this.flashTimer > 0) this.flashTimer -= dt;
 
       this._updateAnimations(dt);
       ParticleManager.update(dt);
@@ -350,6 +360,10 @@ const game = {
     Renderer.clear();
 
     if (this.state === GAME_STATES.PLAYING || this.state === GAME_STATES.WIN || this.state === GAME_STATES.LOSE) {
+      if (this.tutorialLevel > 0 && this.tutorialImage) {
+        Renderer.drawTutorialOverlay(this.tutorialImage, this.tutorialLevel);
+        return;
+      }
       if (this.board) {
         if (this.rotateAnim && this.rotateSnapshot) {
           Renderer.drawRotatedBoard(this.board, this.rotateSnapshot, this.rotateAnim.rotation);
@@ -367,13 +381,12 @@ const game = {
 
         ParticleManager.render(Renderer.ctx);
 
-        Renderer.drawFrames(InputManager.hoveredFrame);
+        Renderer.drawFrames(InputManager.hoveredFrame, this.flashTimer);
         Renderer.drawHUD(
           this.currentLevel,
-          this.timer,
-          this.board.getRemainingCount(),
           this.score,
-          this.targetScore
+          this.targetScore,
+          this.board.getRemainingCount()
         );
 
         if (this.state === GAME_STATES.PLAYING) {
@@ -397,8 +410,7 @@ const game = {
       if (this.state === GAME_STATES.WIN) {
         Renderer.drawOverlay('过关!', `得分: ${this.score}`, COLORS.success);
       } else if (this.state === GAME_STATES.LOSE) {
-        const msg = this.loseReason === 'timeout' ? '时间到' : '游戏结束';
-        Renderer.drawOverlay(msg, `得分: ${this.score} / 目标: ${this.targetScore}`, COLORS.timer);
+        Renderer.drawOverlay('游戏结束', `得分: ${this.score} / 目标: ${this.targetScore}`, COLORS.timer);
       }
     }
   },

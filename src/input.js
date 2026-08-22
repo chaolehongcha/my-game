@@ -173,6 +173,8 @@ const InputManager = {
 
     const pos = this._getPos(e);
 
+    if (this.handlers.onTap && this.handlers.onTap()) return;
+
     if (this._isInRect(pos, this.reshuffleRect)) {
       if (this.handlers.onReshuffle) this.handlers.onReshuffle();
       return;
@@ -209,6 +211,8 @@ const InputManager = {
     const cell = this.board.getCellFromPos(pos.x, pos.y);
     if (cell) {
       this.swipeHandler.start(cell.row, cell.col);
+    } else if (this.handlers.onTap) {
+      this.handlers.onTap();
     }
   },
 

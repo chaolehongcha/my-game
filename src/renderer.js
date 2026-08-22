@@ -197,14 +197,21 @@ const Renderer = {
     ctx.scale(scale, scale);
 
     ctx.fillStyle = '#fff';
-    ctx.font = 'italic bold 32px "Segoe UI", "PingFang SC", sans-serif';
+    ctx.font = 'italic bold 28px "Segoe UI", "PingFang SC", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.shadowColor = 'rgba(0,0,0,0.8)';
     ctx.shadowBlur = 8;
-    ctx.fillText(text, 0, 0);
-    ctx.shadowBlur = 0;
 
+    if (Array.isArray(text)) {
+      text.forEach((line, i) => {
+        ctx.fillText(line, 0, (i - (text.length - 1) / 2) * 36);
+      });
+    } else {
+      ctx.fillText(text, 0, 0);
+    }
+
+    ctx.shadowBlur = 0;
     ctx.restore();
   },
 
@@ -234,7 +241,7 @@ const Renderer = {
     }
   },
 
-  drawFrames(hoveredFrame) {
+  drawFrames(hoveredFrame, flashTimer) {
     const ctx = this.ctx;
     const frames = [
       { rect: InputManager.frameLeftRect, key: 'left', icon: 'ccw' },
@@ -246,7 +253,8 @@ const Renderer = {
       if (!frame.rect) return;
       const hovered = hoveredFrame === frame.key;
 
-      ctx.fillStyle = hovered ? COLORS.arrowHover : COLORS.arrowBg;
+      const flashing = flashTimer > 0 && Math.floor(flashTimer * 4) % 2 === 0;
+      ctx.fillStyle = hovered ? COLORS.arrowHover : (flashing ? 'rgba(78, 204, 163, 0.7)' : COLORS.arrowBg);
       this._roundRect(frame.rect.x, frame.rect.y, frame.rect.w, frame.rect.h, 4);
       ctx.fill();
 
@@ -412,42 +420,75 @@ const Renderer = {
     ctx.globalAlpha = 1;
   },
 
-  drawHUD(level, timer, remaining, score, targetScore) {
+  drawHUD(level, score, targetScore, remaining) {
     const ctx = this.ctx;
 
     ctx.fillStyle = COLORS.background;
     ctx.fillRect(0, 0, CANVAS_WIDTH, BOARD_Y);
 
-    ctx.fillStyle = COLORS.text;
-    ctx.font = 'bold 18px "Segoe UI", "PingFang SC", sans-serif';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(`第 ${level} 关`, 12, BOARD_Y / 2 - 12);
-
     ctx.fillStyle = COLORS.textDim;
-    ctx.font = '14px "Segoe UI", "PingFang SC", sans-serif';
-    ctx.fillText(`剩余: ${remaining}`, 12, BOARD_Y / 2 + 12);
-
-    ctx.textAlign = 'right';
-    ctx.fillStyle = COLORS.targetScore;
-    ctx.fillText(`目标 ${targetScore}`, CANVAS_WIDTH - 96, BOARD_Y / 2 - 12);
-    ctx.fillStyle = COLORS.text;
-    ctx.fillText(`得分 ${score}`, CANVAS_WIDTH - 96, BOARD_Y / 2 + 12);
-
-    const timerColor = timer <= 10 ? COLORS.timer : timer <= 20 ? COLORS.warning : COLORS.text;
-    ctx.fillStyle = timerColor;
-    ctx.font = 'bold 24px "Segoe UI", "PingFang SC", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(`${Math.ceil(timer)}s`, CANVAS_WIDTH / 2, BOARD_Y / 2);
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`第${level}关`, 12, 8);
 
     const progress = Math.min(score / targetScore, 1);
-    ctx.fillStyle = COLORS.gridLine;
-    ctx.fillRect(0, BOARD_Y - 6, CANVAS_WIDTH, 4);
+    const barY = 30;
+    const barH = 8;
+    const barW = CANVAS_WIDTH - 24;
+    const barX = 12;
+
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    this._roundRect(barX, barY, barW, barH, 4);
+    ctx.fill();
     ctx.fillStyle = COLORS.targetScore;
-    ctx.fillRect(0, BOARD_Y - 6, CANVAS_WIDTH * progress, 4);
+    this._roundRect(barX, barY, barW * progress, barH, 4);
+    ctx.fill();
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = COLORS.text;
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillText(`${score}`, CANVAS_WIDTH / 2 - 30, 44);
+    ctx.fillStyle = COLORS.targetScore;
+    ctx.font = '16px sans-serif';
+    ctx.fillText(`/ ${targetScore}`, CANVAS_WIDTH / 2 + 20, 48);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = COLORS.textDim;
+    ctx.font = '11px sans-serif';
+    ctx.textBaseline = 'top';
+    ctx.fillText('目标', CANVAS_WIDTH / 2 + 20, 36);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = COLORS.textDim;
+    ctx.font = '11px sans-serif';
+    ctx.fillText(`剩余${remaining}`, CANVAS_WIDTH - 12, 8);
 
     ctx.fillStyle = COLORS.gridLine;
-    ctx.fillRect(0, BOARD_Y - 2, CANVAS_WIDTH, 2);
+    ctx.fillRect(0, BOARD_Y - 2, CANVAS_WIDTH, 1);
+  },
+
+  drawTutorialOverlay(img, level) {
+    const ctx = this.ctx;
+    ctx.fillStyle = 'rgba(0,0,0,0.85)';
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    const maxW = CANVAS_WIDTH - 40;
+    const maxH = CANVAS_HEIGHT - 120;
+    const scale = Math.min(maxW / img.width, maxH / img.height, 1);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    const x = (CANVAS_WIDTH - w) / 2;
+    const y = (CANVAS_HEIGHT - h) / 2 - 20;
+
+    ctx.drawImage(img, x, y, w, h);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = '16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('点击任意位置继续', CANVAS_WIDTH / 2, CANVAS_HEIGHT - 30);
   },
 
   drawOverlay(text, subtext, color) {
